@@ -1,0 +1,59 @@
+# Shipped defaults for every setting org.doscolas.config.AppConfig reads via Env.get*, loaded
+# once at startup by org.doscolas.config.ConfigFile (see that class's javadoc for the full lookup
+# order). A real environment variable with the same name (e.g. DB_URL) always wins over whatever
+# is here.
+#
+# To override without rebuilding the jar: drop your own config.yml next to it (in the working
+# directory) or point CONFIG_FILE at any path — same pattern as logging.yml/LOGGING_CONFIG_FILE.
+# Do that for anything secret (DB_PASSWORD, JWT_SECRET, FINTOC_*, SMTP_PASSWORD) rather than
+# editing this shipped copy, since it's checked into git.
+#
+# Grouping below (server:, database:, ...) is purely for readability - each leaf key is the env
+# var name it stands in for, and lookup ignores the nesting.
+
+server:
+  PORT: 8080
+  CONTEXT_PATH: /api
+
+database:
+  DB_URL: jdbc:postgresql://localhost:5432/doscolas
+  DB_USERNAME: postgres
+  DB_PASSWORD: 37dominga
+  DB_POOL_SIZE: 10
+
+jwt:
+  JWT_SECRET: Y3VhdHJvUGF0YXNTZWNyZXRLZXlGb3JKV1RBdXRoMjU2Qml0cw==
+  JWT_EXPIRATION_MS: 86400000
+
+frontend:
+  FRONTEND_URL: http://localhost:3000
+
+logging:
+  LOG_LEVEL: INFO
+
+smtp:
+  SMTP_HOST: ""
+  SMTP_PORT: 587
+  SMTP_USERNAME: ""
+  SMTP_PASSWORD: ""
+  SMTP_STARTTLS: true
+  SMTP_FROM_ADDRESS: no-reply@doscolas.cl
+  SMTP_FROM_NAME: Dos Colas
+
+rateLimit:
+  RATE_LIMIT_MAX_REQUESTS: 10
+  RATE_LIMIT_WINDOW_MS: 60000
+
+fintoc:
+  FINTOC_API_URL: https://api.fintoc.com
+  FINTOC_SECRET_KEY: sk_test_-Z4DcpPT83nXb6SgNhXaSnsQTi1qkUYniKgycz3tPTx
+  FINTOC_ACCOUNT_ID: acc_38geSjlleNtmKVe7VngWexSXdVI
+  FINTOC_WEBHOOK_SECRET: whsec_test_-xFmq8-5Ry2E9yePSBxAssts
+  FINTOC_JWS_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDB/3b9E3sgP+iOOKX7lgz6OB+5FW2zAOuNzzq89UT2+O24Tgj0CUzVDqNStHeQ2Y/Sek12EQe1QQ+yOtWou8ePeqMz4Um2OUZI0qbKUTGvxx/pLrEDazioJbwGSYCGfraQekF+ttxn+a4GQZqVvwsyhKOdUkzqtFnnFZzs5lKU8oHA4m7KTUUmjViFuREIeJUkusR5+VkUNYaXYP69WCUTQrsETSi47+qqUZGZ6Tn2sFAmk1C8u88B+zLXy+YL+lLYbvFl8XD50Ubzq2XcQ9ABkcYCfPee2rlXNvTEJn8OczyjbBeL8jprrRZmpTBD7P8M3O1/suQnLlvmK3r7KgXbAgMBAAECggEAAyCvEDkRlOofqFAjfod8+0YoxMW8RTsjkRK61YCpNWFU1Wun20wqSYxF3jevCDSc8mP3mCROjBtZ0tUxMqcF+m5ovGJkDnFxjHHQ/JWlVNP20/FlXmYkVxmpcWFOY1y4Bsl7Z6NjfedAAs8CwtB+SewEU0bLZ94ZtCipPtLry+whzQXqFejKlKdxyn/qlC5VvE+KTN+B52VXWyx+DO8WsCz5yc6P0RjP6e/wOgz0OFrmj0BaGw/OCCX4k43/eUq5W2mz5kWjjzumIYUSXIFStcxOeprB5JkH6IvaDHPi77zCT6PdxMYxg0J+POvZJ1b4De713ZRXKWk1GBy49zhiqQKBgQDe3mVn90LzIs+HruebnE2HUXuKpM87YZGXEWvsxNflrhdPDmSAmiZbp1WV1AdpIgrK2XJ5p46gpt5oE77al6i62Naj1t2VY6gvTGh4YBbpRxRlPVHU5pSOudz7RGWQtW0NSSxy/Z/mS2RkEjLP6VBVwPcLK+4GAJP0piyx/R6JVQKBgQDe1lib35J2r5Ckg6OyKhfilxfT06kUat05S7+RQv6ec+8BEWVttwiAiQEtWPRn/bWIRNCnWVRDcjnWEwrn3WxUj6Tf5/aU94JcCMHE7pAKjrqPmfv2iaDN69yqS2MSZOvozIQ1MPQbRdZD5GR/2qepnGHKKV4OO3J/Wk20BjKSbwKBgQDT7cegRZB0g/W0oK29W7SdqO5BuNcXMICxlu96BvUGg7XGh3kqkWtIXKcWArnJT4XTv1MMPDl0qzly3tPuKalZhDkXM4siM9IKqC3vye//hIfwfY8DVQCPeE6a4T9zjBJXP+30qxkSdT7RqjyHWOX7pbNF/FArhQEs85gs6PXQwQKBgEf8MEWyVIsYrf4nNFNSu8KMErtwLbeVyf8/VBQl80DWrMfIid6GeS2klIfEq7eIQwNRT6Iv/kOHe92G60f5xIwQly9prMN0rVzzyzzF4Cw47VWEZdu/m/3JitBMaCXCCl966d6RANpqlgv6lOikhvMIvKJk+KhaVeOEFYPpWJ7rAoGBANM/qxQzNW06NTGTmJDCXjmyqhK6NL6TjlDipys/2LYrekPzTIIrhuIyxcVThr93wAuoQJcAz+DtFGET3lqOQglmuM2SDK/aocI1Rhi9JoJ0UTbrLD+iSW0TIp8T5T39b0y8xFZG2jDFiD82AQGOgL2L74jDAaxddhRYwYNpwJ5X-----END PRIVATE KEY-----"
+  FINTOC_CALLBACK_URL: https://www.doscolas.cl
+
+payout:
+  PLATFORM_FEE_PERCENTAGE: 0.10
+  PAYOUT_MAX_ATTEMPTS: 3
+  PAYOUT_PROCESS_INTERVAL_MS: 60000
+  PAYOUT_POLL_INTERVAL_MS: 300000

@@ -147,7 +147,7 @@ public final class Main {
         AdminController adminController = new AdminController(takeCareService, paymentService,
                 sitterBankAccountService, payoutService);
 
-        List<String> allowedOrigins = List.of(config.frontendUrl,
+        List<String> allowedOrigins = List.of(config.frontendUrl, "https://dc-ui.onrender.com",
                 "http://localhost:3000", "http://localhost:4200", "http://localhost:5173", "http://localhost:8080");
         Router router = new Router(jwtService, allowedOrigins, config.contextPath);
         healthController.register(router);

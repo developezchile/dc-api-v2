@@ -1,0 +1,50 @@
+# Render Blueprint (https://render.com/docs/blueprint-spec). "render blueprint apply" or the
+# dashboard's "New > Blueprint" picks this up automatically from the repo root.
+#
+# DB_URL below pulls the private-network connection string straight from the doscolas-db
+# service Render provisions (postgresql://user:pass@host/db) — AppConfig.parseDbUrl accepts
+# that form directly, no separate DB_USERNAME/DB_PASSWORD needed here (those still apply for
+# local dev's plain jdbc:postgresql:// URL, see config.yml).
+databases:
+  - name: doscolas-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: dc-api-v2
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: DB_URL
+        fromDatabase:
+          name: doscolas-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      # Everything below is a real secret or environment-specific value with no safe default —
+      # fill these in via the Render dashboard after the first deploy (sync: false keeps them
+      # out of this file and out of git).
+      - key: FRONTEND_URL
+        sync: false
+      - key: FINTOC_SECRET_KEY
+        sync: false
+      - key: FINTOC_ACCOUNT_ID
+        sync: false
+      - key: FINTOC_WEBHOOK_SECRET
+        sync: false
+      - key: FINTOC_JWS_PRIVATE_KEY
+        sync: false
+      - key: FINTOC_CALLBACK_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false

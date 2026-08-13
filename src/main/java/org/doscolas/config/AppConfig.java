@@ -1,5 +1,7 @@
 package org.doscolas.config;
 
+import java.net.URI;
+
 /**
  * Central place where every environment-derived setting is read once at startup, via
  * {@link Env} (env var &gt; {@code config.yml} &gt; the hardcoded default passed below).
@@ -54,9 +56,14 @@ public final class AppConfig {
         this.port = Env.getInt("PORT", 8080);
         this.contextPath = Env.get("CONTEXT_PATH", "/api");
 
-        this.dbUrl = Env.get("DB_URL", "jdbc:postgresql://localhost:5432/doscolas");
-        this.dbUsername = Env.get("DB_USERNAME", "postgres");
-        this.dbPassword = Env.get("DB_PASSWORD", "37dominga");
+        // Accepts either the JDBC form (jdbc:postgresql://host:port/db, paired with DB_USERNAME/
+        // DB_PASSWORD — the localhost default below) or a bare postgres(ql):// URL with embedded
+        // credentials, which is what Render's fromDatabase connectionString hands you. Same
+        // DB_URL env var works unchanged in both places.
+        String[] db = parseDbUrl(Env.get("DB_URL", "jdbc:postgresql://localhost:5432/doscolas"));
+        this.dbUrl = db[0];
+        this.dbUsername = db[1] != null ? db[1] : Env.get("DB_USERNAME", "postgres");
+        this.dbPassword = db[2] != null ? db[2] : Env.get("DB_PASSWORD", "37dominga");
         this.dbPoolSize = Env.getInt("DB_POOL_SIZE", 10);
 
         this.jwtSecret = Env.get("JWT_SECRET", "Y3VhdHJvUGF0YXNTZWNyZXRLZXlGb3JKV1RBdXRoMjU2Qml0cw==");
@@ -86,5 +93,28 @@ public final class AppConfig {
         this.payoutMaxAttempts = Env.getInt("PAYOUT_MAX_ATTEMPTS", 3);
         this.payoutProcessIntervalMs = Env.getLong("PAYOUT_PROCESS_INTERVAL_MS", 60_000L);
         this.payoutPollIntervalMs = Env.getLong("PAYOUT_POLL_INTERVAL_MS", 300_000L);
+    }
+
+    /**
+     * Returns {@code [jdbcUrl, username, password]}; username/password are {@code null} when
+     * {@code rawUrl} is already a JDBC URL (they come from DB_USERNAME/DB_PASSWORD instead).
+     */
+    private static String[] parseDbUrl(String rawUrl) {
+        if (rawUrl.startsWith("jdbc:")) {
+            return new String[] { rawUrl, null, null };
+        }
+        URI uri = URI.create(rawUrl);
+        String username = null;
+        String password = null;
+        String userInfo = uri.getUserInfo();
+        if (userInfo != null) {
+            int sep = userInfo.indexOf(':');
+            username = sep >= 0 ? userInfo.substring(0, sep) : userInfo;
+            password = sep >= 0 ? userInfo.substring(sep + 1) : null;
+        }
+        int port = uri.getPort() > 0 ? uri.getPort() : 5432;
+        String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + uri.getPath()
+                + (uri.getQuery() != null ? "?" + uri.getQuery() : "");
+        return new String[] { jdbcUrl, username, password };
     }
 }
